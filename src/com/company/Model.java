@@ -28,7 +28,7 @@ public class Model {
      * @return random integer number
      */
     public int rand(){
-        RAND_MAX = 1 + (int)(Math.random()*(100)); // generate maximum value of the range from 1 - 100
+        RAND_MAX = 1 + (int)(Math.random()*(99)); // generate maximum value of the range from 1 - 99
         return (int)(Math.random()*(RAND_MAX + 1));
     }
 

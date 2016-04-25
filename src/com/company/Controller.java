@@ -75,7 +75,7 @@ public class Controller {
     public int checkMinInputValue(Scanner sc){
         view.printMessage(view.ASK_MIN_VALUE);
         int inputNumber = sc.nextInt();
-        while (inputNumber < 0 || inputNumber > 100){
+        while (inputNumber < 1 || inputNumber > 99){
             view.printMessage(view.WRONG_MIN_VALUE);
             inputNumber = sc.nextInt();
         }
@@ -90,11 +90,18 @@ public class Controller {
     public int checkMaxInputValue(Scanner sc){
         view.printMessage(view.ASK_MAX_VALUE);
         int inputNumber = sc.nextInt();
-        while (inputNumber < 0 || inputNumber > 100){
+        while (inputNumber < 1 || inputNumber > 99){
             view.printMessage(view.WRONG_MAX_VALUE);
             inputNumber = sc.nextInt();
         }
         return inputNumber;
+    }
+
+    public boolean checkOutOfRange(int number){
+        if (number < model.getMinValue() || number > model.getMaxValue()){
+            return true;
+        }
+        return false;
     }
 
     // Game method
@@ -105,10 +112,16 @@ public class Controller {
         int inputNumber = sc.nextInt();
         while (inputNumber != model.getSecretNumber()){
             model.getAttemptHistory().add(inputNumber);
-            if (inputNumber < model.getSecretNumber()){
-                view.printMessage(view.NEED_LARGER_NUMBER);
-            }else{
-                view.printMessage(view.NEED_LESS_NUMBER);
+            if (checkOutOfRange(inputNumber)){
+                view.printMessage(view.OUT_OF_RANGE);
+            }else {
+                if (inputNumber < model.getSecretNumber()) {
+                    view.printMessage(view.NEED_LARGER_NUMBER);
+                    model.setMinValue(inputNumber);
+                } else {
+                    view.printMessage(view.NEED_LESS_NUMBER);
+                    model.setMaxValue(inputNumber);
+                }
             }
             view.printMessageWithHistory(model.getAttemptHistory());
             view.printMessageWithRange(model.getMinValue(), model.getMaxValue());
