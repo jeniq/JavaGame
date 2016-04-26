@@ -43,6 +43,24 @@ public class Model {
     }
 
     /**
+     * Compare number on equals
+     * @param userNumber number entered by user
+     * @return true in case numbers are equals, else return false
+     */
+    public boolean isEquals(int userNumber){
+        return userNumber == secretNumber;
+    }
+
+    /**
+     * Compare numbers
+     * @param userNumber number entered by user
+     * @return true in case userNumber is less than secretNumber, else false
+     */
+    public boolean isLess(int userNumber){
+        return userNumber < secretNumber;
+    }
+
+    /**
      * Attempt's size
      * @return history length of user's attempts
      */

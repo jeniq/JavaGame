@@ -7,10 +7,12 @@ import java.util.Scanner;
  */
 public class Controller {
 
-    // Constructor
+    private int userNumber;
+
     Model model;
     View view;
 
+    // Constructor
     public Controller(Model model, View view){
         this.model = model;
         this.view = view;
@@ -109,23 +111,23 @@ public class Controller {
         view.printMessage(view.START_GAME);
         view.printMessageWithRange(model.getMinValue(), model.getMaxValue());
         view.printMessage(view.GUESS_NUMBER);
-        int inputNumber = sc.nextInt();
-        while (inputNumber != model.getSecretNumber()){
-            model.getAttemptHistory().add(inputNumber);
-            if (checkOutOfRange(inputNumber)){
+        userNumber = sc.nextInt();
+        while (!model.isEquals(userNumber)){
+            model.getAttemptHistory().add(userNumber);
+            if (checkOutOfRange(userNumber)){
                 view.printMessage(view.OUT_OF_RANGE);
             }else {
-                if (inputNumber < model.getSecretNumber()) {
+                if (model.isLess(userNumber)) {
                     view.printMessage(view.NEED_LARGER_NUMBER);
-                    model.setMinValue(inputNumber);
+                    model.setMinValue(userNumber);
                 } else {
                     view.printMessage(view.NEED_LESS_NUMBER);
-                    model.setMaxValue(inputNumber);
+                    model.setMaxValue(userNumber);
                 }
             }
             view.printMessageWithHistory(model.getAttemptHistory());
             view.printMessageWithRange(model.getMinValue(), model.getMaxValue());
-            inputNumber = sc.nextInt();
+            userNumber = sc.nextInt();
         }
         view.printMessage(view.WIN_NUMBER);
         view.printMessageWithStatistic(model.getAttemptHistory(), model.getHistoryLength());
