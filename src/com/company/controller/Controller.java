@@ -1,4 +1,8 @@
-package com.company;
+package com.company.controller;
+
+import com.company.GlobalConstants;
+import com.company.view.View;
+import com.company.model.Model;
 
 import java.util.Scanner;
 
@@ -6,9 +10,6 @@ import java.util.Scanner;
  * Created by Женя on 23.04.2016.
  */
 public class Controller {
-
-    private int userNumber;
-
     Model model;
     View view;
 
@@ -24,16 +25,19 @@ public class Controller {
 
         view.printMessage(view.GREETING);
         model.setMenuChoice(checkInputValueInMenu(sc));
+        model.setMinValue(GlobalConstants.MIN_VALUE); // set primary minimum value
+        model.setMaxValue(GlobalConstants.MAX_VALUE); // set primary maximum value
         switch (model.getMenuChoice()){
             case 0:
-                model.setMinValue(0);
                 model.setSecretNumber(model.rand());
                 model.setMaxValue(model.getRAND_MAX());
                 break;
             case 1:
                 do{
-                    model.setMinValue(checkMinInputValue(sc));
-                    model.setMaxValue(checkMaxInputValue(sc));
+                    view.printMessage(view.ASK_MIN_BARRIER_VALUE);
+                    model.setMinValue(checkInputUserValue(sc));
+                    view.printMessage(view.ASK_MAX_BARRIER_VALUE);
+                    model.setMaxValue(checkInputUserValue(sc));
                 }while (!rightInputValue(model.getMinValue(), model.getMaxValue()));
                 model.setSecretNumber(model.rand(model.getMinValue(), model.getMaxValue()));
                 break;
@@ -47,11 +51,20 @@ public class Controller {
      * @return number of user's choice
      */
     public int checkInputValueInMenu(Scanner sc){
+        int inputNumber = 0;
         view.printMessage(view.CHOICE_IN_MENU);
-        int inputNumber = sc.nextInt();
-        while (inputNumber < 0 || inputNumber > 1){
-            view.printMessage(view.WRONG_MENU_CHOICE);
-            inputNumber = sc.nextInt();
+        while (true){
+            // check int - value
+            while (!sc.hasNextInt()){
+                view.printMessage(view.WRONG_MENU_CHOICE);
+                sc.next();
+            }
+            // check value in diapason
+            if ((inputNumber = sc.nextInt()) < 0 || inputNumber > 1){
+                view.printMessage(view.WRONG_MENU_CHOICE);
+                continue;
+            }
+            break;
         }
         return inputNumber;
     }
@@ -70,66 +83,38 @@ public class Controller {
     }
 
     /**
-     * Check input minimum value
+     * Check input barrier value
      * @param sc number entered by user
-     * @return minimum integer number
+     * @return integer number
      */
-    public int checkMinInputValue(Scanner sc){
-        view.printMessage(view.ASK_MIN_VALUE);
-        int inputNumber = sc.nextInt();
-        while (inputNumber < 1 || inputNumber > 99){
-            view.printMessage(view.WRONG_MIN_VALUE);
-            inputNumber = sc.nextInt();
+    public int checkInputUserValue(Scanner sc){
+        int inputNumber = 0;
+        while (true) {
+            while (!sc.hasNextInt()) {
+                view.printMessage(view.WRONG_INT_DATA);
+                sc.next();
+            }
+            if ((inputNumber = sc.nextInt()) < model.getMinValue() || inputNumber > model.getMaxValue()) {
+                view.printMessage(view.WRONG_BARRIER_VALUE);
+                continue;
+            }
+            break;
         }
         return inputNumber;
-    }
-
-    /**
-     * Check input maximum value
-     * @param sc number entered by user
-     * @return maximum integer number
-     */
-    public int checkMaxInputValue(Scanner sc){
-        view.printMessage(view.ASK_MAX_VALUE);
-        int inputNumber = sc.nextInt();
-        while (inputNumber < 1 || inputNumber > 99){
-            view.printMessage(view.WRONG_MAX_VALUE);
-            inputNumber = sc.nextInt();
-        }
-        return inputNumber;
-    }
-
-    public boolean checkOutOfRange(int number){
-        if (number < model.getMinValue() || number > model.getMaxValue()){
-            return true;
-        }
-        return false;
     }
 
     // Game method
     public void startGame(Scanner sc){
+        int userNumber = 0;
         view.printMessage(view.START_GAME);
         view.printMessageWithRange(model.getMinValue(), model.getMaxValue());
         view.printMessage(view.GUESS_NUMBER);
-        userNumber = sc.nextInt();
-        while (!model.isEquals(userNumber)){
+        while (!model.isEquals(userNumber = checkInputUserValue(sc))){
             model.getAttemptHistory().add(userNumber);
-            if (checkOutOfRange(userNumber)){
-                view.printMessage(view.OUT_OF_RANGE);
-            }else {
-                if (model.isLess(userNumber)) {
-                    view.printMessage(view.NEED_LARGER_NUMBER);
-                    model.setMinValue(userNumber);
-                } else {
-                    view.printMessage(view.NEED_LESS_NUMBER);
-                    model.setMaxValue(userNumber);
-                }
-            }
             view.printMessageWithHistory(model.getAttemptHistory());
             view.printMessageWithRange(model.getMinValue(), model.getMaxValue());
-            userNumber = sc.nextInt();
-        }
+            }
         view.printMessage(view.WIN_NUMBER);
         view.printMessageWithStatistic(model.getAttemptHistory(), model.getHistoryLength());
-    }
+        }
 }

@@ -1,8 +1,8 @@
 package com.company;
 
-import javax.xml.bind.SchemaOutputResolver;
-import java.util.Random;
-import java.util.Scanner;
+import com.company.controller.Controller;
+import com.company.model.Model;
+import com.company.view.View;
 
 public class Main {
 

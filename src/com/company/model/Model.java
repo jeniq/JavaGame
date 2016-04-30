@@ -1,4 +1,4 @@
-package com.company;
+package com.company.model;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,7 +28,7 @@ public class Model {
      * @return random integer number
      */
     public int rand(){
-        RAND_MAX = 1 + (int)(Math.random()*(99)); // generate maximum value of the range from 1 - 99
+        RAND_MAX = minValue + (int)(Math.random()*(maxValue - minValue + 1)); // generate maximum value of the range from 1 - 99
         return (int)(Math.random()*(RAND_MAX + 1));
     }
 
@@ -48,16 +48,14 @@ public class Model {
      * @return true in case numbers are equals, else return false
      */
     public boolean isEquals(int userNumber){
-        return userNumber == secretNumber;
-    }
-
-    /**
-     * Compare numbers
-     * @param userNumber number entered by user
-     * @return true in case userNumber is less than secretNumber, else false
-     */
-    public boolean isLess(int userNumber){
-        return userNumber < secretNumber;
+        if (userNumber < secretNumber) {
+            minValue = userNumber;
+            return false;
+        }else if (userNumber > secretNumber){
+            maxValue = userNumber;
+            return false;
+        }
+        return true;
     }
 
     /**
@@ -66,10 +64,6 @@ public class Model {
      */
     public int getHistoryLength(){
         return attemptHistory.size();
-    }
-
-    public int getSecretNumber() {
-        return secretNumber;
     }
 
     public void setSecretNumber(int secretNumber) {
@@ -112,7 +106,4 @@ public class Model {
         return RAND_MAX;
     }
 
-    public void setRAND_MAX(int MAX_RAND) {
-        this.RAND_MAX = MAX_RAND;
-    }
 }
